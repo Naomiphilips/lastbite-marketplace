@@ -1,0 +1,240 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Create Product • LastBite</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #28a745;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    .bidding-section {
+      border: 1px solid #dee2e6;
+      border-radius: 0.375rem;
+      padding: 1rem;
+      margin-top: 1rem;
+      background-color: #f8f9fa;
+    }
+  </style>
+</head>
+<body class="bg-light">
+<div class="container py-4">
+  <h1 class="mb-3">Create Product</h1>
+  <form method="post" enctype="multipart/form-data" class="card p-3 bg-white" id="productForm">
+    {% csrf_token %}
+    
+    <!-- Basic Fields -->
+    <div class="mb-3">
+      <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+      {{ form.title }}
+      {% if form.title.errors %}
+        <div class="text-danger small">{{ form.title.errors }}</div>
+      {% endif %}
+    </div>
+    
+    <div class="mb-3">
+      <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+      {{ form.description }}
+      {% if form.description.errors %}
+        <div class="text-danger small">{{ form.description.errors }}</div>
+      {% endif %}
+    </div>
+    
+    <div class="mb-3">
+      <label for="{{ form.base_price.id_for_label }}" class="form-label">{{ form.base_price.label }}</label>
+      {{ form.base_price }}
+      {% if form.base_price.errors %}
+        <div class="text-danger small">{{ form.base_price.errors }}</div>
+      {% endif %}
+    </div>
+    
+    <div class="mb-3">
+      <label for="{{ form.quantity.id_for_label }}" class="form-label">{{ form.quantity.label }}</label>
+      {{ form.quantity }}
+      {% if form.quantity.errors %}
+        <div class="text-danger small">{{ form.quantity.errors }}</div>
+      {% endif %}
+    </div>
+    
+    <div class="mb-3">
+      <label for="{{ form.image.id_for_label }}" class="form-label">{{ form.image.label }}</label>
+      {{ form.image }}
+      {% if form.image.errors %}
+        <div class="text-danger small">{{ form.image.errors }}</div>
+      {% endif %}
+    </div>
+    
+    <!-- Bidding Toggle -->
+    <div class="mb-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <label for="id_enable_bidding" class="form-label fw-bold">Enable/Disable Bartering</label>
+        <label class="toggle-switch">
+          {{ form.enable_bidding }}
+          <span class="slider"></span>
+        </label>
+      </div>
+      {% if form.enable_bidding.help_text %}
+        <small class="text-muted">{{ form.enable_bidding.help_text }}</small>
+      {% endif %}
+      {% if form.enable_bidding.errors %}
+        <div class="text-danger small">{{ form.enable_bidding.errors }}</div>
+      {% endif %}
+    </div>
+    
+    <!-- Bidding Section (shown/hidden based on toggle) -->
+    <div id="biddingSection" class="bidding-section" style="display: none;">
+      <div class="mb-3">
+        <label for="id_min_price" class="form-label fw-bold">Minimum Bartering/Offer price</label>
+        <div class="input-group">
+          {{ form.min_price }}
+          <button type="button" class="btn btn-dark" id="setMinPriceBtn">Set Minimum Price</button>
+        </div>
+        {% if form.min_price.help_text %}
+          <small class="text-muted">{{ form.min_price.help_text }}</small>
+        {% endif %}
+        {% if form.min_price.errors %}
+          <div class="text-danger small">{{ form.min_price.errors }}</div>
+        {% endif %}
+      </div>
+      
+      <div class="mb-3">
+        <label for="id_end_time" class="form-label">End Time</label>
+        {{ form.end_time }}
+        {% if form.end_time.help_text %}
+          <small class="text-muted">{{ form.end_time.help_text }}</small>
+        {% endif %}
+        {% if form.end_time.errors %}
+          <div class="text-danger small">{{ form.end_time.errors }}</div>
+        {% endif %}
+      </div>
+    </div>
+    
+    <!-- End Time for Timed Discount (shown when bidding is disabled) -->
+    <div id="timedDiscountSection" class="mb-3">
+      <label for="id_end_time" class="form-label">End Time (for timed discount)</label>
+      {{ form.end_time }}
+      {% if form.end_time.help_text %}
+        <small class="text-muted">{{ form.end_time.help_text }}</small>
+      {% endif %}
+      {% if form.end_time.errors %}
+        <div class="text-danger small">{{ form.end_time.errors }}</div>
+      {% endif %}
+    </div>
+    
+    <input type="hidden" name="end_time_utc" id="end_time_utc" value="">
+    
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary">Save</button>
+      <a class="btn btn-outline-secondary" href="{% url 'business:dashboard' %}">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Toggle bidding section visibility
+  const enableBiddingToggle = document.getElementById('id_enable_bidding');
+  const biddingSection = document.getElementById('biddingSection');
+  const timedDiscountSection = document.getElementById('timedDiscountSection');
+  const minPriceInput = document.getElementById('id_min_price');
+  
+  
+  function updateBiddingVisibility() {
+    const endTimeInBidding = biddingSection.querySelector('input[name="end_time"]');
+    const endTimeInTimed = timedDiscountSection.querySelector('input[name="end_time"]');
+  
+    if (enableBiddingToggle.checked) {
+      biddingSection.style.display = 'block';
+      timedDiscountSection.style.display = 'none';
+      if (endTimeInBidding) endTimeInBidding.required = true;
+      if (endTimeInTimed) endTimeInTimed.required = false;
+    } else {
+      biddingSection.style.display = 'none';
+      timedDiscountSection.style.display = 'block';
+      if (minPriceInput) {
+        minPriceInput.required = false;
+        minPriceInput.value = '';
+      }
+      if (endTimeInTimed) endTimeInTimed.required = true; 
+      if (endTimeInBidding) endTimeInBidding.required = false;
+    }
+  }
+  
+  // Initialize on page load
+  updateBiddingVisibility();
+  
+  // Update on toggle change
+  enableBiddingToggle.addEventListener('change', updateBiddingVisibility);
+  
+  // Set minimum price button
+  document.getElementById('setMinPriceBtn')?.addEventListener('click', function() {
+    const basePriceInput = document.querySelector('input[name="base_price"]');
+    if (basePriceInput && basePriceInput.value) {
+      const basePrice = parseFloat(basePriceInput.value);
+      if (!isNaN(basePrice) && basePrice > 0) {
+        minPriceInput.value = (basePrice * 0.6).toFixed(2); // 60% of base price
+      }
+    }
+  });
+  
+  // Convert datetime-local input to UTC before form submission
+  document.getElementById('productForm').addEventListener('submit', function(e) {
+    const endTimeUtcInput = document.getElementById('end_time_utc');
+    
+    const visibleEndTimeInput = enableBiddingToggle.checked 
+    ? biddingSection.querySelector('input[name="end_time"]')
+    : timedDiscountSection.querySelector('input[name="end_time"]');
+  
+  if (visibleEndTimeInput && visibleEndTimeInput.value) {
+    const localDate = new Date(visibleEndTimeInput.value);
+    const utcIsoString = localDate.toISOString();
+    endTimeUtcInput.value = utcIsoString;
+    
+      
+      console.log('Local time entered:', visibleEndTimeInput.value);
+      console.log('UTC time being sent:', utcIsoString);
+    } else {
+      endTimeUtcInput.value = '';
+    }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

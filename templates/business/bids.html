@@ -1,0 +1,115 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Bids / Bartering • LastBite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <style>
+    body { background-color: #f5f5f7; }
+    .sticky-top-shadow { box-shadow:0 2px 8px rgba(0,0,0,.04) }
+  </style>
+</head>
+<body>
+
+<!-- nav bar for biz user to navigate-->
+<nav class="navbar navbar-expand-lg bg-white sticky-top sticky-top-shadow">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{% url 'landing:index' %}">LASTBITE</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navMain" class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'landing:index' %}#about">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'business:dashboard' %}">
+            <i class="fa-regular fa-circle-user me-1"></i> Dashboard
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div> <!-- display bid amount if there are any based on user output-->
+      <h1 class="h3 mb-1">Bids / Bartering</h1>
+      <p class="text-muted mb-0">
+        You currently have {{ total_bids }} bid{{ total_bids|pluralize }} on your products.
+      </p>
+    </div>
+    <a href="{% url 'business:dashboard' %}" class="btn btn-outline-secondary btn-sm">
+      ← Back to Dashboard
+    </a>
+  </div>
+<!-- groups bids by the product-->
+  {% if bids_by_product %}
+    {% for group in bids_by_product %}
+      {% with product=group.product bid_list=group.bids %}
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="h6 mb-0">{{ product.title }}</h2>
+            <small class="text-muted">
+              Current price: ${{ product.get_current_price|floatformat:2 }}
+            </small>
+          </div> <!--display details of product that was bidded on-->
+          <a href="{% url 'business:product_detail' product.id %}" class="btn btn-sm btn-outline-primary">
+            View Product
+          </a>
+        </div>
+
+        <div class="card-body p-0">
+          {% if bid_list %}
+            <div class="table-responsive">
+              <table class="table table-sm mb-0 align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">Bidder</th> <!-- bidder name + details below-->
+                    <th scope="col">Amount</th>
+                    <th scope="col">Placed At</th>
+          
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for bid in bid_list %}
+                    <tr>
+                      <td>{{ bid.bidder.username }}</td>
+                      <td>${{ bid.amount|floatformat:2 }}</td>
+                      <td>{{ bid.created_at|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="p-3 mb-0 text-muted small">
+              No bids yet for this product.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+      {% endwith %}
+    {% endfor %}
+  {% else %} <!-- if user has no bids, this will be displayed-->
+    <div class="alert alert-light border">
+      You have no bids or barter offers yet. When customers place bids on your eligible items,
+      they’ll appear here!
+    </div>
+  {% endif %}
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

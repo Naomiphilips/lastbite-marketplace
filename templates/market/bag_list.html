@@ -1,0 +1,66 @@
+{% extends "business/public.html" %}
+{% block content %}
+<div class="container py-4">
+  <h1>Dynamic Pricing Market</h1>
+  <p class="text-muted">Products with prices that decrease over time</p>
+  
+  {% if products %}
+    <div class="row g-3">
+      {% for product in products %}
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ product.title }}</h5>
+              <p class="text-muted small">{{ product.owner.get_full_name|default:product.owner.username }}</p>
+              <p class="card-text">{{ product.description|default:"No description" }}</p>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                  <span class="h5 mb-0">${{ product.get_current_price|floatformat:2 }}</span>
+                  {% if product.end_time %}
+                    {% with current=product.get_current_price base=product.base_price %}
+                      {% if current != base %}
+                        <small class="text-muted text-decoration-line-through ms-2">${{ base|floatformat:2 }}</small>
+                      {% endif %}
+                    {% endwith %}
+                  {% endif %}
+                </div>
+              </div>
+              {% if request.user.is_authenticated %}
+                {% with groups=request.user.groups.all %}
+                  {% if not groups %}
+                    <form method="post" action="{% url 'market:add_to_cart' %}" class="d-inline">
+                      {% csrf_token %}
+                      <input type="hidden" name="product_id" value="{{ product.pk }}">
+                      <input type="hidden" name="quantity" value="1">
+                      <button type="submit" class="btn btn-primary btn-sm"
+                              {% if product.quantity <= 0 %}disabled{% endif %}>
+                        Add to Cart
+                      </button>
+                    </form>
+                  {% else %}
+                    {% for group in groups %}
+                      {% if group.name != "BUSINESS" %}
+                        <form method="post" action="{% url 'market:add_to_cart' %}" class="d-inline">
+                          {% csrf_token %}
+                          <input type="hidden" name="product_id" value="{{ product.pk }}">
+                          <input type="hidden" name="quantity" value="1">
+                          <button type="submit" class="btn btn-primary btn-sm"
+                                  {% if product.quantity <= 0 %}disabled{% endif %}>
+                            Add to Cart
+                          </button>
+                        </form>
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">No products available at the moment.</div>
+  {% endif %}
+</div>
+{% endblock %}

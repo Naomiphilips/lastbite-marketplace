@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Business Dashboard • LastBite</title>
+
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    .tile-card:hover { box-shadow: 0 .5rem 1rem rgba(0,0,0,.08); transform: translateY(-2px); transition: .15s ease; }
+  </style>
+</head>
+<body class="bg-light">
+
+  <!-- Top Nav -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-semibold" href="{% url 'landing:index' %}">LastBite</a>
+
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <a class="btn btn-outline-primary btn-sm" href="{% url 'landing:index' %}">Home</a>
+        <a class="btn btn-outline-primary"
+        href="{% url 'business:business_public' business.id %}">
+        <i class="fa-solid fa-eye"></i> View Public Page
+        </a>
+
+
+        {% if request.user.is_authenticated %}
+          <!-- Avatar + dropdown -->
+          <div class="dropdown">
+            <a class="btn btn-light d-flex align-items-center dropdown-toggle"
+               href="#" id="bizAcctMenu" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa-regular fa-circle-user me-2"></i>
+              <span class="d-none d-sm-inline">
+                {{ request.user.first_name|default:request.user.username }}
+              </span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bizAcctMenu">
+              <!-- Change to your profile route or remove if not ready -->
+              
+              <li><a class="dropdown-item" href="{% url 'business:dashboard' %}">Dashboard</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form action="{% url 'users:logout' %}" method="post" class="px-3">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-link p-0">Logout</button>
+                </form>
+              </li>
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Main -->
+  <main class="container py-5">
+    <header class="mb-4">
+      <h1 class="mb-1">Business Dashboard</h1>
+      <p class="text-muted mb-0">Welcome, {{ request.user.first_name|default:request.user.username }}.</p>
+    </header>
+
+    <div class="row g-3">
+      <!-- Create Listing -->
+      <div class="col-md-4">
+        <a class="card h-100 text-decoration-none tile-card" href="{% url 'business:product_create' %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-2">
+              <i class="fa-solid fa-plus-circle me-2"></i>
+              <h5 class="card-title mb-0">Create Product</h5>
+            </div>
+            <p class="card-text text-muted">Add a new item with photos, price, and quantity.</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- My Listings ascpect for business user -->
+      <div class="col-md-4">
+        <a class="card h-100 text-decoration-none tile-card" href="{% url 'business:product_list' %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-2">
+              <i class="fa-solid fa-rectangle-list me-2"></i>
+              <h5 class="card-title mb-0">My Listings</h5>
+            </div>
+            <p class="card-text text-muted">View, edit, or disable your current items.</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Bids / Bartering -->
+      <div class="col-md-4">
+        <a class="card h-100 text-decoration-none tile-card" href="{% url 'business:bids' %}">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-2">
+              <i class="fa-solid fa-handshake me-2"></i>
+              <h5 class="card-title mb-0">Bids/Bartering</h5>
+            </div>
+            <p class="card-text text-muted">Review active bids and barter offers.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

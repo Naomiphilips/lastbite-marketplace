@@ -1,0 +1,69 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Edit Listing • LastBite</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+  <h1 class="mb-3">Edit Listing</h1>
+  <form method="post" enctype="multipart/form-data" class="card p-3 bg-white" id="listingForm">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" name="end_time_utc" id="end_time_utc" value="">
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary">Save Changes</button>
+      <a class="btn btn-outline-secondary" href="{% url 'business:listing_detail' item.pk %}">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Convert UTC time to local time for display when page loads
+  
+  document.addEventListener('DOMContentLoaded', function() {
+      const endTimeInput = document.querySelector('input[type="datetime-local"][name="end_time"]');
+      if (endTimeInput && endTimeInput.hasAttribute('data-utc-time')) {
+          const utcTimeString = endTimeInput.getAttribute('data-utc-time');
+          // Parse UTC time
+
+          const utcDate = new Date(utcTimeString);
+          // Convert to local time format for datetime-local input
+          const year = utcDate.getFullYear();
+          const month = String(utcDate.getMonth() + 1).padStart(2, '0');
+          const day = String(utcDate.getDate()).padStart(2, '0');
+          const hours = String(utcDate.getHours()).padStart(2, '0');
+          const minutes = String(utcDate.getMinutes()).padStart(2, '0');
+          
+          endTimeInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+          console.log('Converted UTC to local for display:', endTimeInput.value);
+      }
+  });
+  
+  // Convert datetime-local input to UTC before form submission
+  document.getElementById('listingForm').addEventListener('submit', function(e) {
+      const endTimeInput = document.querySelector('input[type="datetime-local"][name="end_time"]');
+      const endTimeUtcInput = document.getElementById('end_time_utc');
+      
+      if (endTimeInput && endTimeInput.value) {
+          // Create a Date object from the local datetime string
+          const localDate = new Date(endTimeInput.value);
+          
+          // Convert to UTC ISO string
+          const utcIsoString = localDate.toISOString();
+          
+          // Store UTC time in hidden field ONLY
+          endTimeUtcInput.value = utcIsoString;
+          
+          console.log('Local time entered:', endTimeInput.value);
+          console.log('UTC time being sent:', utcIsoString);
+      }
+  });
+  </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

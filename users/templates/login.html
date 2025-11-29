@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Login • LastBite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="/">LastBite</a>
+      <div class="ms-auto">
+        <a class="btn btn-primary" href="{% url 'users:register' %}">Sign Up</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <h1 class="h3 fw-bold mb-3">Welcome back</h1>
+
+            {# Django auth form non-field errors (e.g., invalid creds) #}
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+              </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'users:login' %}" novalidate>
+              {% csrf_token %}
+
+              {# Username (we use email as username) #}
+              <div class="mb-3">
+                <label class="form-label" for="{{ form.username.id_for_label }}">Email address</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                  <div class="text-danger small mt-1">{{ form.username.errors|striptags }}</div>
+                {% endif %}
+              </div>
+
+              {# Password #}
+              <div class="mb-3">
+                <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                  <div class="text-danger small mt-1">{{ form.password.errors|striptags }}</div>
+                {% endif %}
+              </div>
+
+              {# Optional "next" support so redirects return where user came from #}
+              {% if next %}
+                <input type="hidden" name="next" value="{{ next }}">
+              {% endif %}
+
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="remember" id="rememberMe">
+                  <label class="form-check-label" for="rememberMe">Remember me</label>
+                </div>
+                <a class="small" href="{% url 'users:password_reset' %}">Forgot password?</a>
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+
+            <hr class="my-4" />
+            <p class="mb-0 small text-muted">
+              New to LastBite?
+              <a href="{% url 'users:register' %}">Create an account</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

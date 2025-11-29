@@ -1,0 +1,193 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LastBite – Order History</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background: #fff; }
+        .history-shell { max-width: 420px; margin: 0 auto; }
+        .history-card { background:#fdf5ff; border-radius:1rem; padding:0.75rem; }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'dashboard:user_dashboard' %}">
+                <i class="fas fa-utensils text-primary"></i> <span class="fw-bold">LastBite</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- left/middle links -->
+                <ul class="navbar-nav ms-auto me-3">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard:user_dashboard' %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/barter">Barter</a>
+                    </li>
+                </ul>
+                <!-- user dropdown -->
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> {{ request.user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'users:logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- main content -->
+    <div class="container-fluid" style="padding-top: 90px;">
+        <div class="history-shell">
+            <!-- back + title -->
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <a href="javascript:history.back()" class="text-dark me-2" aria-label="Back">←</a>
+                <h2 class="fw-semibold mb-0">Order History</h2>
+            </div>
+
+    
+
+            <!-- search -->
+            <div class="mb-3">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0">
+                        <i class="bi bi-list"></i>
+                    </span>
+                    <input id="history-search" type="text" class="form-control" placeholder="">
+                    <span class="input-group-text bg-light border-0">
+                        <i class="bi bi-search"></i>
+                    </span>
+                </div>
+            </div>
+
+            <!-- list container -->
+            <div id="history-list" class="list-group history-card">
+                {% if items %}
+                {% for item in items %}
+                <a href="#" class="history-card d-flex gap-2 p-2 mb-2 text-decoration-none text-dark"
+                   data-detail="{{ item.vendor_name|lower }}"
+                   data-subtype="{{ item.status|lower }}">
+                    <div class="avatar rounded-circle d-flex align-items-center justify-content-center"
+                        style="width:32px; height:32px; background:#e5d3ff; font-weight:600;">
+                        {{ item.item_title|first|upper }}
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                            <p class="mb-0 fw-semibold">{{ item.item_title }}</p>
+                            <small class="text-muted">
+                                ${{ item.total_dollars|floatformat:2 }}
+                            </small>
+                        </div>
+                        <small class="text-muted">
+                            From: {{ item.vendor_name }} • Status: {{ item.status|capfirst }}
+                            {% if item.quantity > 1 %} • Qty: {{ item.quantity }}{% endif %}
+                        </small><br>
+                        <small class="text-muted">
+                            Purchased on <span class="order-time-display" data-utc-time="{{ item.created_at.isoformat }}">{{ item.created_at|date:"M j, g:i A" }}</span>
+                        </small>
+                    </div>
+                </a>
+                {% empty %}
+                    <div class="text-center p-4">
+                        <p class="fw-semibold mb-1">No orders yet</p>
+                        <p class="text-muted mb-3">Completed / purchased orders will show up here.</p>
+                        <a href="/market" class="btn btn-dark btn-sm">Browse Marketplace</a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center p-4">
+                        <p class="fw-semibold mb-1">No orders yet</p>
+                        <p class="text-muted mb-3">Completed / purchased orders will show up here.</p>
+                        <a href="/market" class="btn btn-dark btn-sm">Browse Marketplace</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Convert UTC timestamps
+        const orderTimeElements = document.querySelectorAll('.order-time-display');
+        orderTimeElements.forEach(function(element) {
+            const utcTimeString = element.getAttribute('data-utc-time');
+            if (utcTimeString) {
+                const utcDate = new Date(utcTimeString);
+                // Format as: "Nov 16, 1:20 AM" 
+                const options = { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric', 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true
+                };
+                const localTimeString = utcDate.toLocaleString('en-US', options);
+                element.textContent = localTimeString;
+            }
+        });
+        
+        const searchInput = document.getElementById("history-search");
+        const rows = Array.from(document.querySelectorAll(".history-row"));
+        const list = document.getElementById("history-list");
+
+        function applyFilter() {
+            const term = searchInput.value.trim().toLowerCase();
+            let shown = 0;
+
+            rows.forEach(row => {
+                const title = row.dataset.title || "";
+                const detail = row.dataset.detail || "";
+                const subtype = row.dataset.subtype || "";
+                if (!term || title.includes(term) || detail.includes(term) || subtype.includes(term)) {
+                    row.style.display = "flex";
+                    shown++;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            if (shown === 0) {
+                if (!document.getElementById("no-results")) {
+                    list.insertAdjacentHTML("beforeend", `
+                        <div id="no-results" class="text-center p-4">
+                            <p class="fw-semibold mb-1">No results</p>
+                            <p class="text-muted mb-3">Try a different search or browse.</p>
+                            <a href="/market" class="btn btn-dark btn-sm">Browse Marketplace</a>
+                        </div>
+                    `);
+                }
+            } else {
+                const noRes = document.getElementById("no-results");
+                if (noRes) noRes.remove();
+            }
+        }
+
+        searchInput.addEventListener("input", applyFilter);
+
+        document.getElementById("load-more").addEventListener("click", function() {
+            alert("Load more clicked – hook to pagination in backend.");
+        });
+    });
+    </script>
+</body>
+</html>
