@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'dashboard:user_dashboard' %}">
+                <i class="fas fa-utensils text-primary"></i> <span class="fw-bold">LastBite</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard:user_dashboard' %}">Back to Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h5>Product Details</h5>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard:user_dashboard' %}" class="sidebar-link">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </a>
+                <a href="{% url 'market:cart_detail' %}" class="sidebar-link">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>My Basket</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <!-- Product Header -->
+                <div class="page-header">
+                    <h1>{{ product.title }}</h1>
+                </div>
+
+                <!-- Product Content -->
+                <div class="row g-4">
+                    <!-- Product Image -->
+                    <div class="col-md-6">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.title }}" class="img-fluid rounded">
+                        {% else %}
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 400px;">
+                                <span class="text-muted">No image available</span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="col-md-6">
+                        <!-- Price and Availability -->
+                        <div class="mb-4">
+                            <span class="h3 text-success">${{ product.base_price }}</span>
+                            <span class="badge bg-primary ms-2">
+                                {% if product.quantity > 0 %}
+                                    {{ product.quantity }} available
+                                {% else %}
+                                    Out of stock
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <h5>Description</h5>
+                            <p>{{ product.description|linebreaks }}</p>
+                        </div>
+
+                        <!-- Notes -->
+                        {% if product.notes %}
+                        <div class="mb-4">
+                            <h5>Additional Notes</h5>
+                            <p>{{ product.notes|linebreaks }}</p>
+                        </div>
+                        {% endif %}
+
+                        <!-- Location -->
+                        <div class="mb-4">
+                            <h5>Location</h5>
+                            <p>
+                                {% if product.address %}
+                                    {{ product.address }}<br>
+                                    {{ product.city }}, {{ product.state }} {{ product.zip_code }}
+                                {% else %}
+                                    <span class="text-muted">Location not available</span>
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        <!-- Seller Info -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">Seller Information</h5>
+                                <p><strong>{{ seller.get_full_name|default:seller.username }}</strong></p>
+                                {% if business_registration %}
+                                    <p><small class="text-muted">✓ Business verified</small></p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex gap-2">
+                            {% if is_owner %}
+                                <a href="{% url 'edit_product' product.id %}" class="btn btn-warning">
+                                    <i class="fas fa-edit"></i> Edit Product
+                                </a>
+                                <a href="{% url 'delete_product' product.id %}" class="btn btn-danger" onclick="return confirm('Are you sure?')">
+                                    <i class="fas fa-trash"></i> Delete Product
+                                </a>
+                            {% else %}
+                                {% if product.quantity > 0 %}
+                                    <button class="btn btn-primary" id="contactSellerBtn">
+                                        <i class="fas fa-envelope"></i> Contact Seller
+                                    </button>
+                                    <button class="btn btn-success" id="addToCartBtn">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                {% else %}
+                                    <button class="btn btn-secondary" disabled>Out of Stock</button>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('contactSellerBtn')?.addEventListener('click', function() {
+            alert('Contact seller feature coming soon');
+        });
+
+        document.getElementById('addToCartBtn')?.addEventListener('click', function() {
+            alert('Add to cart feature coming soon');
+        });
+    </script>
+</body>
+</html>

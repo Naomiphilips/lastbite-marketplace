@@ -1,0 +1,776 @@
+<!-- File location: landing/templates/landing/index.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LastBite - Fight Food Waste, Save Money{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'landing/css/style.css' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'landing:index' %}">
+      <i class="fas fa-utensils text-primary"></i>
+      <span class="ms-2 fw-bold">LastBite</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#how-it-works">How It Works</a></li>
+        <li class="nav-item"><a class="nav-link" href="#for-customers">For Customers</a></li>
+        <li class="nav-item"><a class="nav-link" href="#for-business">For Business</a></li>
+
+         {% if user.is_authenticated %}
+           <li class="nav-item ms-lg-3">
+          <a class="nav-link btn btn-outline-primary" href="{% url 'dashboard' %}">Dashboard</a>
+         </li>
+    <li class="nav-item ms-lg-2">
+      <form action="{% url 'users:logout' %}" method="post" class="d-inline m-0">
+        {% csrf_token %}
+        <button type="submit" class="nav-link btn btn-outline-secondary border-0">Logout</button>
+      </form>
+    </li>
+  {% else %}
+    <li class="nav-item">
+      <a class="nav-link btn btn-outline-primary ms-lg-3" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link btn btn-outline-primary ms-lg-2" href="#" data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</a>
+    </li>
+  {% endif %}
+</ul>
+    </div>
+  </div>
+</nav>
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-6">
+                    <h1 class="display-3 fw-bold mb-4">Fight Food Waste, <span class="text-primary">Save Money</span></h1>
+                    <p class="lead mb-4">Connect with local businesses to rescue delicious food at great prices. Every bite counts in reducing waste.</p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="#for-customers" class="btn btn-primary btn-lg px-4">Find Food Near You</a>
+                        <a href="#for-business" class="btn btn-outline-primary btn-lg px-4">List Your Business</a>
+                    </div>
+                    <div class="mt-5">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <h3 class="fw-bold text-primary mb-0">10K+</h3>
+                                <p class="small text-muted">Meals Saved</p>
+                            </div>
+                            <div class="col-4">
+                                <h3 class="fw-bold text-primary mb-0">500+</h3>
+                                <p class="small text-muted">Businesses</p>
+                            </div>
+                            <div class="col-4">
+                                <h3 class="fw-bold text-primary mb-0">50%</h3>
+                                <p class="small text-muted">Avg. Savings</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image-container">
+                        <img src="{% static 'images/food.jpg' %}" alt="Delicious Food" class="img-fluid rounded-4 shadow-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">How It Works</h2>
+                <p class="lead text-muted">Simple, fast, and transparent</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm h-100 text-center p-4">
+                        <div class="card-body">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-search fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="fw-bold">Browse</h5>
+                            <p class="text-muted">Search nearby businesses and available items</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm h-100 text-center p-4">
+                        <div class="card-body">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-shopping-cart fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="fw-bold">Reserve</h5>
+                            <p class="text-muted">Add items to cart and complete reservation</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm h-100 text-center p-4">
+                        <div class="card-body">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-credit-card fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="fw-bold">Pay</h5>
+                            <p class="text-muted">Secure payment with instant confirmation</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm h-100 text-center p-4">
+                        <div class="card-body">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-store fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="fw-bold">Pickup</h5>
+                            <p class="text-muted">Get your pickup code and collect your food</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Customers Section -->
+    <section id="for-customers" class="py-5">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img src="{% static 'images/customer.jpg' %}" alt="Customer App" class="img-fluid rounded-4 shadow-lg">
+                </div>
+                <div class="col-lg-6">
+                    <span class="badge bg-primary mb-3">For Customers</span>
+                    <h2 class="display-5 fw-bold mb-4">Discover Amazing Deals Near You</h2>
+                    <p class="lead mb-4">Save money while helping reduce food waste. It's a win-win!</p>
+                    <div class="feature-list">
+                        <div class="d-flex mb-3">
+                            <div class="feature-icon-sm me-3">
+                                <i class="fas fa-map-marker-alt text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Location-Based Search</h5>
+                                <p class="text-muted">Find businesses near you with available items</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <div class="feature-icon-sm me-3">
+                                <i class="fas fa-filter text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Smart Filters</h5>
+                                <p class="text-muted">Filter by cuisine, price, pickup time, and dietary preferences</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <div class="feature-icon-sm me-3">
+                                <i class="fas fa-clock text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Real-Time Availability</h5>
+                                <p class="text-muted">See exact quantities and pickup times</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-4">
+                            <div class="feature-icon-sm me-3">
+                                <i class="fas fa-lock text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Secure Payments</h5>
+                                <p class="text-muted">Fast and secure checkout process</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#signupModal">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Business Section -->
+    <section id="for-business" class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                    <img src="{% static 'images/business.jpg' %}" alt="Business Dashboard" class="img-fluid rounded-4 shadow-lg">
+                </div>
+                <div class="col-lg-6 order-lg-1">
+                    <span class="badge bg-success mb-3">For Business</span>
+                    <h2 class="display-5 fw-bold mb-4">Turn Waste Into Revenue</h2>
+                    <p class="lead mb-4">Manage your surplus inventory efficiently with our powerful dashboard.</p>
+                    <div class="feature-list">
+                        <div class="d-flex mb-3">
+                            <div class="feature-icon-sm me-3">
+                                <i class="fas fa-tachometer-alt text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Dedicated Dashboard</h5>
+                                <p class="text-muted">Easy-to-use interface for managing all your listings</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <div class="feature-icon-sm me-3">
+                                <i class="fas fa-plus-circle text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Quick Listing Creation</h5>
+                                <p class="text-muted">Add items with photos, descriptions, and prices in minutes</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <div class="feature-icon-sm me-3">
+                                <i class="fas fa-layer-group text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Batch Listings</h5>
+                                <p class="text-muted">Create multiple listings efficiently for daily items</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <div class="feature-icon-sm me-3">
+                                <i class="fas fa-chart-line text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Revenue Tracking</h5>
+                                <p class="text-muted">Monitor your earnings and waste reduction impact</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-4">
+                            <div class="feature-icon-sm me-3">
+                                <i class="fas fa-clipboard-list text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Reservation Management</h5>
+                                <p class="text-muted">Track active reservations and pickup codes in one place</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#businessSignupModal">Join as Business</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="py-5">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">Why Choose LastBite?</h2>
+                <p class="lead text-muted">Making a difference, one meal at a time</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100 p-4">
+                        <div class="card-body text-center">
+                            <i class="fas fa-leaf fa-3x text-success mb-3"></i>
+                            <h4 class="fw-bold mb-3">Environmental Impact</h4>
+                            <p class="text-muted">Help reduce food waste and its carbon footprint. Every meal saved makes a difference.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100 p-4">
+                        <div class="card-body text-center">
+                            <i class="fas fa-dollar-sign fa-3x text-primary mb-3"></i>
+                            <h4 class="fw-bold mb-3">Great Savings</h4>
+                            <p class="text-muted">Enjoy quality food at discounted prices. Save up to 50% or more on your favorite meals.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100 p-4">
+                        <div class="card-body text-center">
+                            <i class="fas fa-handshake fa-3x text-warning mb-3"></i>
+                            <h4 class="fw-bold mb-3">Support Local</h4>
+                            <p class="text-muted">Help local businesses reduce waste while supporting your community economy.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section py-5">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center text-black">
+                    <h2 class="display-4 fw-bold mb-4">Ready to Make a Difference?</h2>
+                    <p class="lead text-muted">Join thousands of users and businesses fighting food waste together.</p>
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a href="#" class="btn btn-light btn-lg px-5" data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up Now</a>
+                        <a href="#" class="btn btn-light btn-lg px-5" data-bs-toggle="modal" data-bs-target="#businessSignupModal">List Your Business</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h4 class="fw-bold mb-3">
+                        <i class="fas fa-utensils"></i> LastBite
+                    </h4>
+                    <p class="text-muted">Fighting food waste, one bite at a time.</p>
+                    <div class="social-links mt-3">
+                        <a href="" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="" class="text-white"><i class="fab fa-linkedin fa-lg"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
+                    <h5 class="fw-bold mb-3">Company</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="" class="text-muted text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="" class="text-muted text-decoration-none">Careers</a></li>
+                        <li class="mb-2"><a href="" class="text-muted text-decoration-none">Press</a></li>
+                        <li class="mb-2"><a href="" class="text-muted text-decoration-none">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
+                    <h5 class="fw-bold mb-3">Support</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="" class="text-muted text-decoration-none">Help Center</a></li>
+                        <li class="mb-2"><a href="" class="text-muted text-decoration-none">Contact Us</a></li>
+                        <li class="mb-2"><a href="" class="text-muted text-decoration-none">FAQs</a></li>
+                        <li class="mb-2"><a href="" class="text-muted text-decoration-none">Safety</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
+                    <h5 class="fw-bold mb-3">Legal</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="" class="text-muted text-decoration-none">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="" class="text-muted text-decoration-none">Terms of Service</a></li>
+                        <li class="mb-2"><a href="" class="text-muted text-decoration-none">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-3">Download</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="" class="text-muted text-decoration-none"><i class="fab fa-apple me-2"></i>iOS App</a></li>
+                        <li class="mb-2"><a href="" class="text-muted text-decoration-none"><i class="fab fa-google-play me-2"></i>Android App</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 bg-secondary">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="text-muted mb-0">&copy; 2025 LastBite. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="text-muted mb-0">Made with <i class="fas fa-heart text-danger"></i> for a sustainable future</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold" id="loginModalLabel">Welcome Back</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <form method="post" action="{% url 'users:login' %}">
+  {% csrf_token %}
+
+  <!-- AuthenticationForm expects 'username' even if it's an email -->
+  <div class="mb-3">
+    <label for="id_username" class="form-label">Email address</label>
+    <input
+      type="email"
+      class="form-control {% if login_errors.username %}is-invalid{% endif %}"
+      id="id_username"
+      name="username"
+      placeholder="your@email.com"
+      value="{{ login_username|default:'' }}"
+      required
+    >
+    {% if login_errors.username %}
+      {% for e in login_errors.username %}
+        <div class="invalid-feedback d-block">{{ e }}</div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <div class="mb-3">
+    <label for="id_password" class="form-label">Password</label>
+    <input
+      type="password"
+      class="form-control {% if login_errors.password %}is-invalid{% endif %}"
+      id="id_password"
+      name="password"
+      placeholder="Enter your password"
+      required
+    >
+    {% if login_errors.password %}
+      {% for e in login_errors.password %}
+        <div class="invalid-feedback d-block">{{ e }}</div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  {% if login_errors.non_field %}
+    {% for e in login_errors.non_field %}
+      <div class="alert alert-danger py-2 small">{{ e }}</div>
+    {% endfor %}
+  {% endif %}
+
+ 
+
+  <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+
+  <div class="text-center">
+    <a href="{% url 'users:password_reset' %}" class="text-muted small">Forgot password?</a>
+  </div>
+</form>
+
+
+        <hr class="my-4">
+        <p class="text-center text-muted small mb-0">
+          Don't have an account?
+          <a href="#" data-bs-toggle="modal" data-bs-target="#signupModal" data-bs-dismiss="modal">Sign up</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+
+
+    <!-- Customer Signup Modal -->
+    <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold" id="signupModalLabel">Create Your Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form method="post" action="{% url 'users:register' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="signupName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="signupName" placeholder="John Doe" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupEmail" class="form-label">Email address</label>
+                            <input type="email" name="email" class="form-control" id="signupEmail" placeholder="your@email.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupPassword" class="form-label">Password</label>
+                            <input type="password" name="password1" class="form-control" id="signupPassword" placeholder="Create a password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupConfirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" name="password2" class="form-control" id="signupConfirmPassword" placeholder="Confirm your password" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="termsAgree" required>
+                            <label class="form-check-label small" for="termsAgree">
+                                I agree to the <a href="">Terms & Conditions</a>
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mb-3">Sign Up</button>
+                    </form>
+                    <hr class="my-4">
+                    <p class="text-center text-muted small mb-0">Already have an account? <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Business Signup Modal -->
+<div class="modal fade" id="businessSignupModal" tabindex="-1" aria-labelledby="businessSignupLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold" id="businessSignupLabel">Join as a Business</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <form id="business-register-form" method="post" action="{% url 'users:business-register' %}">
+          {% csrf_token %}
+          {{ business_form.non_field_errors }}
+
+          <div class="row">
+            <!-- Business Name -->
+            <div class="col-md-6 mb-3">
+              <label for="businessName" class="form-label">Business Name</label>
+              <input
+                type="text"
+                id="businessName"
+                name="business_name"
+                value="{{ business_form.business_name.value|default_if_none:'' }}"
+                class="form-control {% if business_form.business_name.errors %}is-invalid{% endif %}"
+                maxlength="120"
+                autocomplete="organization"
+                required
+                aria-describedby="businessNameHelp {% if business_form.business_name.errors %}businessNameErr{% endif %}"
+              >
+              <div id="businessNameHelp" class="form-text">e.g., “Molly's Cupcakes”</div>
+              {% for e in business_form.business_name.errors %}
+                <div id="businessNameErr" class="invalid-feedback d-block">{{ e }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Business Type -->
+            <div class="col-md-6 mb-3">
+              <label for="businessType" class="form-label">Business Type</label>
+              <select
+                id="businessType"
+                name="business_type"
+                class="form-select {% if business_form.business_type.errors %}is-invalid{% endif %}"
+                required
+                aria-describedby="{% if business_form.business_type.errors %}businessTypeErr{% endif %}"
+              >
+                <option value="">Select type</option>
+                {% for val, label in business_form.fields.business_type.choices %}
+                  <option value="{{ val }}" {% if business_form.business_type.value == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+              {% for e in business_form.business_type.errors %}
+                <div id="businessTypeErr" class="invalid-feedback d-block">{{ e }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Address -->
+          <div class="mb-3">
+            <label for="businessAddress" class="form-label">Business Address</label>
+            <input
+              type="text"
+              id="businessAddress"
+              name="business_address"
+              placeholder="123 Main St, Chicago, IL 60601"
+              value="{{ business_form.business_address.value|default_if_none:'' }}"
+              class="form-control {% if business_form.business_address.errors %}is-invalid{% endif %}"
+              maxlength="255"
+              autocomplete="street-address"
+              required
+              aria-describedby="businessAddressHelp {% if business_form.business_address.errors %}businessAddressErr{% endif %}"
+            >
+            <div id="businessAddressHelp" class="form-text">
+              Format: “123 Main St, Chicago, IL 60601”.
+            </div>
+            {% for e in business_form.business_address.errors %}
+              <div id="businessAddressErr" class="invalid-feedback d-block">{{ e }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="row">
+            <!-- Phone -->
+            <div class="col-md-6 mb-3">
+              <label for="businessPhone" class="form-label">Phone Number</label>
+              <input
+                type="tel"
+                id="businessPhone"
+                name="phone_number"
+                value="{{ business_form.phone_number.value|default_if_none:'' }}"
+                class="form-control {% if business_form.phone_number.errors %}is-invalid{% endif %}"
+                inputmode="numeric"
+                pattern="\d{7,15}"
+                maxlength="15"
+                autocomplete="tel"
+                required
+                aria-describedby="businessPhoneHelp {% if business_form.phone_number.errors %}businessPhoneErr{% endif %}"
+              >
+              <div id="businessPhoneHelp" class="form-text">Digits only, up to 15.</div>
+              {% for e in business_form.phone_number.errors %}
+                <div id="businessPhoneErr" class="invalid-feedback d-block">{{ e }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6 mb-3">
+              <label for="businessEmail" class="form-label">Business Email</label>
+              <input
+                type="email"
+                id="businessEmail"
+                name="business_email"
+                value="{{ business_form.business_email.value|default_if_none:'' }}"
+                class="form-control {% if business_form.business_email.errors %}is-invalid{% endif %}"
+                autocomplete="email"
+                required
+                aria-describedby="{% if business_form.business_email.errors %}businessEmailErr{% endif %}"
+              >
+              {% for e in business_form.business_email.errors %}
+                <div id="businessEmailErr" class="invalid-feedback d-block">{{ e }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Owner -->
+            <div class="col-md-6 mb-3">
+              <label for="ownerName" class="form-label">Owner/Manager Name</label>
+              <input
+                type="text"
+                id="ownerName"
+                name="owner_name"
+                value="{{ business_form.owner_name.value|default_if_none:'' }}"
+                class="form-control {% if business_form.owner_name.errors %}is-invalid{% endif %}"
+                maxlength="120"
+                autocomplete="name"
+                required
+                aria-describedby="{% if business_form.owner_name.errors %}ownerNameErr{% endif %}"
+              >
+              {% for e in business_form.owner_name.errors %}
+                <div id="ownerNameErr" class="invalid-feedback d-block">{{ e }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Password -->
+            <div class="col-md-6 mb-3">
+              <label for="businessPassword" class="form-label">Password</label>
+              <input
+                type="password"
+                id="businessPassword"
+                name="password"
+                class="form-control {% if business_form.password.errors %}is-invalid{% endif %}"
+                minlength="8"
+                autocomplete="new-password"
+                required
+                aria-describedby="passwordHelp {% if business_form.password.errors %}passwordErr{% endif %}"
+              >
+              <div id="passwordHelp" class="form-text">Must be at least 8 characters (strong password required).</div>
+              {% for e in business_form.password.errors %}
+                <div id="passwordErr" class="invalid-feedback d-block">{{ e }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Terms -->
+          <div class="mb-3 form-check">
+            <input
+              type="checkbox"
+              id="businessTerms"
+              name="agree_terms"
+              class="form-check-input {% if business_form.agree_terms.errors %}is-invalid{% endif %}"
+              {% if business_form.agree_terms.value %}checked{% endif %}
+              value="1"
+              required
+              aria-describedby="{% if business_form.agree_terms.errors %}termsErr{% endif %}"
+            >
+            <label class="form-check-label small" for="businessTerms">
+              I agree to the <a href="">Business Terms &amp; Conditions</a>
+            </label>
+            {% for e in business_form.agree_terms.errors %}
+              <div id="termsErr" class="invalid-feedback d-block">{{ e }}</div>
+            {% endfor %}
+          </div>
+
+          <button type="submit" class="btn btn-success w-100">Register Business</button>
+        </form>
+
+        <hr class="my-4">
+        <p class="text-center text-muted small mb-0">
+          Already registered?
+          <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">Login</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Business Registration Success Modal -->
+<div class="modal fade" id="businessSuccessModal" tabindex="-1" aria-labelledby="businessSuccessLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold" id="businessSuccessLabel">Registration Successful</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p class="mb-4">Your business has been registered. You can log in now to access your dashboard.</p>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-primary"
+                  data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">
+            Login
+          </button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if open_business_modal %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const el = document.getElementById('businessSignupModal');
+    if (el) new bootstrap.Modal(el).show();
+  });
+</script>
+{% endif %}
+
+{% if open_business_success_modal %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const el = document.getElementById('businessSuccessModal');
+    if (el) new bootstrap.Modal(el).show();
+  });
+</script>
+{% endif %}
+
+
+<script>
+  const phone = document.getElementById('businessPhone');
+  phone?.addEventListener('input', () => { phone.value = phone.value.replace(/\D+/g,'').slice(0,15); });
+</script>
+
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% if open_login_modal and not user.is_authenticated %}
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const el = document.getElementById('loginModal');
+        if (el) new bootstrap.Modal(el).show();
+        
+    });
+    
+    </script>
+    
+    {% endif %}
+
+    <!-- Custom JS -->
+    <script src="{% static 'landing/js/main.js' %}"></script>
+</body>
+</html>
